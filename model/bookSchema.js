@@ -15,6 +15,8 @@ const BookSchema = new mongoose.Schema({
     ref: "Category",
     required: true,
   },
+  selled: { type: Number, default: 0 },
+  rating: { type: Number, default: 0, min: 0, max: 5 },
 });
 
 module.exports = mongoose.model("Book", BookSchema);
