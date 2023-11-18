@@ -2,8 +2,9 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
-const books = require("./routes/router");
-const CustomError = require("./util/CustomError");
+const books = require("./routes/bookRouter");
+const admin = require("./routes/adminRouter");
+const CustomError = require("./util/customError");
 const globalErrorHandler = require("./controller/errorController");
 //const notFound = require("./middleware/notFound");
 const app = express();
@@ -18,6 +19,7 @@ mongoose.connect(process.env.MONGO_URI).then(() => {
 
 app.use(express.json());
 app.use("/api/v1/books", books);
+app.use("/api/v1", admin);
 app.all("*", (req, res, next) => {
   next(new CustomError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
