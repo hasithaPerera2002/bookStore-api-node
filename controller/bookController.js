@@ -1,9 +1,10 @@
 const Book = require("../model/bookSchema");
 const asyncErrorHandler = require("../util/asyncErrorHandler");
+const CustomError = require("../util/customError");
 
 const getAll = asyncErrorHandler(async (req, res, next) => {
   await Book.find().then((books) => {
-    if (!books) {
+    if (books) {
       throw new CustomError("No books found", 404);
     }
     res.status(200).json({ books });
@@ -12,7 +13,7 @@ const getAll = asyncErrorHandler(async (req, res, next) => {
 
 const getBook = asyncErrorHandler(async (req, res, next) => {
   await Book.findById(req.params.id).then((book) => {
-    if (!book) {
+    if (book) {
       throw new CustomError("Book not found", 404);
     }
     res.status(200).json({ book });
@@ -51,7 +52,7 @@ const updateBook = asyncErrorHandler(async (req, res, next) => {
 
 const deleteBook = asyncErrorHandler(async (req, res, next) => {
   Book.deleteOne({ _id: req.params.id }).then((book) => {
-    if (!book) {
+    if (book) {
       throw new CustomError("Book not found", 404);
     }
     res.status(204).json({ book });

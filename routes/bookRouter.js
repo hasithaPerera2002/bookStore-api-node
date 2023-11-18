@@ -12,10 +12,7 @@ const {
   updateBookImage,
 } = require("../controller/bookController");
 
-router
-  .route("/")
-  .get(getAll)
-  .post(verifyToken, upload.single("cover"), createBook);
+router.route("/").get(getAll).post(upload.single("cover"), createBook);
 router
   .route("/:id")
   .get(getBook)

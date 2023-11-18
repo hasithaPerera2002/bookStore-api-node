@@ -17,6 +17,7 @@ module.exports = (error, req, res, next) => {
     const message = `Invalid input data. ${errors.join(". ")}`;
     error = new CustomError(message, 400);
   }
+
   res.status(error.statusCode).json({
     status: error.statusCode,
     message: error.message,

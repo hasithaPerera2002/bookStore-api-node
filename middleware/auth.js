@@ -1,4 +1,5 @@
 const jsonwebtoken = require("jsonwebtoken");
+const CustomError = require("../util/customError");
 
 function verifyToken(req, res, next) {
   const authHeader = req.headers.authorization;
