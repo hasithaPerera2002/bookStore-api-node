@@ -9,15 +9,15 @@ const register = asyncErrorHandler(async (req, res, next) => {
     if (err) {
       throw new CustomError("Something went wrong", 500);
     }
-  });
 
-  let admin = new Admin({
-    email: req.body.email,
-    username: req.body.username,
-    password: hash,
-  });
-  admin.save().then((admin) => {
-    res.status(201).json({ admin });
+    let admin = new Admin({
+      email: req.body.email,
+      username: req.body.username,
+      password: hash,
+    });
+    admin.save().then((admin) => {
+      res.status(201).json({ admin });
+    });
   });
 });
 
@@ -43,8 +43,8 @@ const login = asyncErrorHandler(async (req, res, next) => {
                 expiresIn: "1h",
               }
             );
-            resp.setHeader("Authorization", `Bearer ${token}`);
-            resp.status(200).json({ message: "check the header" });
+            res.setHeader("Authorization", `Bearer ${token}`);
+            res.status(200).json({ message: "check the header" });
           } else {
             throw new CustomError("Password does not matched!", 401);
           }
@@ -56,4 +56,4 @@ const login = asyncErrorHandler(async (req, res, next) => {
   );
 });
 
-module.exports = { register };
+module.exports = { register, login };
