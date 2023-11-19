@@ -3,12 +3,39 @@ const asyncErrorHandler = require("../util/asyncErrorHandler");
 const CustomError = require("../util/customError");
 
 const getAll = asyncErrorHandler(async (req, res, next) => {
-  await Book.find().then((books) => {
-    if (!books || books.length === 0) {
-      throw new CustomError("No books found", 404);
-    }
-    res.status(200).json({ books });
-  });
+  const { featured, category, author, sort } = req.query;
+  const queryObject = {};
+
+  if (featured) {
+    queryObject.featured = featured === "true" ? true : false;
+  }
+
+  if (category) {
+    queryObject.category = category;
+  }
+
+  if (author) {
+    queryObject.author = author;
+  }
+
+  let filteredBookList = Book.find(queryObject);
+
+  if (sort) {
+    const sortList = sort.split(",").join(" ");
+    filteredBookList = filteredBookList.sort(sortList);
+  } else {
+    filteredBookList = filteredBookList.sort("-publishedYear");
+  }
+
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 20;
+  const startIndex = (page - 1) * limit;
+
+  filteredBookList = filteredBookList.skip(startIndex).limit(limit);
+
+  const books = await filteredBookList;
+
+  res.status(200).json({ books, nbHits: books.length });
 });
 
 const getBook = asyncErrorHandler(async (req, res, next) => {
