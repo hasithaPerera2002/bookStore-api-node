@@ -1,4 +1,4 @@
-const Admin = require("../model/adminSchema");
+const User = require("../model/userSchema");
 const asyncErrorHandler = require("../util/asyncErrorHandler");
 const CustomError = require("../util/customError");
 const jwt = require("jsonwebtoken");
@@ -10,13 +10,13 @@ const register = asyncErrorHandler(async (req, res, next) => {
       throw new CustomError("Something went wrong", 500);
     }
 
-    let admin = new Admin({
+    let user = new User({
       email: req.body.email,
       username: req.body.username,
       password: hash,
     });
-    admin.save().then((admin) => {
-      res.status(201).json({ admin });
+    user.save().then((user) => {
+      res.status(201).json({ user });
     });
   });
 });
@@ -25,10 +25,10 @@ const login = asyncErrorHandler(async (req, res, next) => {
   var username = req.body.username;
   var password = req.body.password;
 
-  Admin.findOne({ $or: [{ username: username }, { email: username }] }).then(
-    (admin) => {
-      if (admin) {
-        bcrypt.compare(password, admin.password, function (err, result) {
+  User.findOne({ $or: [{ username: username }, { email: username }] }).then(
+    (user) => {
+      if (user) {
+        bcrypt.compare(password, user.password, function (err, result) {
           if (err) {
             throw new CustomError(
               "Something went wrong /" + err.message + "",
@@ -50,10 +50,21 @@ const login = asyncErrorHandler(async (req, res, next) => {
           }
         });
       } else {
-        throw new CustomError("No admin found!", 404);
+        throw new CustomError("No user found!", 404);
       }
     }
   );
 });
 
-module.exports = { register, login };
+const forgotPassword = asyncErrorHandler(async (req, res, next) => {
+  const { email } = req.body;
+  const user = await User.findOne({ email: email });
+
+  if (!user) {
+    throw new CustomError("user not found", 404);
+  }
+
+  res.status(200).json({ resetToken });
+});
+
+module.exports = { register, login, forgotPassword };
