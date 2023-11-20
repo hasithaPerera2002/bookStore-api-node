@@ -8,7 +8,6 @@ const {
   login,
   forgotPassword,
 } = require("../controller/userController");
-const app = require("..");
 
 router.route("/register").post(register);
 router.route("/login").post(login);
@@ -20,16 +19,18 @@ router
 
 router.route("/auth/google/callback").get(
   passport.authenticate("google", {
-    successRedirect: "/protected",
+    successRedirect: "auth/success",
     failureRedirect: "/auth/failure",
   })
 );
 
 router.route("/auth/failure").get((req, res) => {
+  console.log("Failed attempt");
   res.send("Failed attempt");
 });
 
-router.route("/protected").get((req, res) => {
+router.route("/auth/success").get((req, res) => {
+  console.log("Success");
   res.send("Success");
 });
 

@@ -9,6 +9,7 @@ passport.use(
         "30387854277-b6r93h5il4gnfcnfj9sgct3hqk9kot39.apps.googleusercontent.com",
       clientSecret: "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",
       callbackURL: "https://localhost:3000/api/v1/auth/google/callback",
+      passReqToCallback: true,
     },
     function (accessToken, refreshToken, profile, cb) {
       User.findOrCreate({ googleId: profile.id }, function (err, user) {
